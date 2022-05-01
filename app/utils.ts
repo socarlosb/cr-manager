@@ -1,6 +1,7 @@
 import { differenceInDays, formatDistanceToNowStrict } from "date-fns";
 
 import type {
+  IClanCurrentRace,
   IMember,
   IMemberWithRaceFame,
   IParticipants,
@@ -34,27 +35,18 @@ export const getClanRaceLog = async (clanTag: string): Promise<IRaceLog[]> => {
   return raceLog;
 };
 
-const getClanMembersFromRace = (standings: IStandings) => {
-  return standings.clan.participants.map((participant) => {
-    const {
-      tag,
-      name,
-      fame,
-      repairPoints,
-      boatAttacks,
-      decksUsed,
-      decksUsedToday,
-    } = participant;
-    return {
-      tag,
-      name,
-      fame,
-      repairPoints,
-      boatAttacks,
-      decksUsed,
-      decksUsedToday,
-    };
-  });
+export const getClanCurrentRace = async (
+  clanTag: string
+): Promise<IClanCurrentRace> => {
+  const url = `https://crproxy.herokuapp.com/clans/%23${cleanTag(
+    clanTag
+  )}/currentriverrace`;
+
+  const response = await fetch(url);
+  const { data } = await response.json();
+
+  const currentRace: IClanCurrentRace = data?.clan;
+  return currentRace;
 };
 
 const getClanMembersWithRaceFame = (
@@ -84,7 +76,8 @@ const getClanMembersWithRaceFame = (
 export const getClanMembersRaceFame = async (
   clanTag: string,
   members: IMember[],
-  raceLog: IRaceLog[]
+  raceLog: IRaceLog[],
+  currentRace: IClanCurrentRace
 ): Promise<IMemberWithRaceFame[]> => {
   const getClanStatsOfRace = (race: IRaceLog) => {
     return race.standings.filter((standing) => {
@@ -93,13 +86,10 @@ export const getClanMembersRaceFame = async (
     })[0];
   };
 
-  const currentRace: IStandings = getClanStatsOfRace(raceLog[0]);
-  const lastRace: IStandings = getClanStatsOfRace(raceLog[1]);
+  const lastRace: IStandings = getClanStatsOfRace(raceLog[0]);
 
-  const currentRaceParticipants: IParticipants[] =
-    getClanMembersFromRace(currentRace);
-  const lastRaceParticipants: IParticipants[] =
-    getClanMembersFromRace(lastRace);
+  const currentRaceParticipants: IParticipants[] = currentRace?.participants;
+  const lastRaceParticipants: IParticipants[] = lastRace?.clan.participants;
 
   const clanMembersWithRaceFame: IMemberWithRaceFame[] =
     getClanMembersWithRaceFame(

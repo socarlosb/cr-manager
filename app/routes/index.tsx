@@ -3,6 +3,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import {
   dateDays,
+  getClanCurrentRace,
   getClanMembers,
   getClanMembersRaceFame,
   getClanRaceLog,
@@ -14,10 +15,12 @@ import { options } from "~/options";
 export const loader: LoaderFunction = async () => {
   const riverRaceLog = await getClanRaceLog("#YVYYC9QC");
   const members = await getClanMembers("#YVYYC9QC");
+  const currentRace = await getClanCurrentRace("#YVYYC9QC");
   const membersWithRaceLog = await getClanMembersRaceFame(
     "#YVYYC9QC",
     members,
-    riverRaceLog
+    riverRaceLog,
+    currentRace
   );
 
   return json({ members: membersWithRaceLog });

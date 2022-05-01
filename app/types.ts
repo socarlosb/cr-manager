@@ -52,3 +52,12 @@ export interface IRaceLog {
   createdDate: string;
   standings: [IStandings];
 }
+
+export interface IClanCurrentRace {
+  tag: string;
+  name: string;
+  badgeId: number;
+  fame: number;
+  clanScore: number;
+  participants: [IParticipants];
+}
