@@ -60,10 +60,10 @@ const getClanMembersWithRaceFame = (
     const currentRaceFame =
       currentRaceParticipants.filter(
         (participant) => participant.tag === tag
-      )[0]?.fame || 0;
+      )[0]?.fame || '-';
     const lastRaceFame =
       lastRaceParticipants.filter((participant) => participant.tag === tag)[0]
-        ?.fame || 0;
+        ?.fame || '-';
 
     return {
       ...member,
